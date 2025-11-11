@@ -1,0 +1,89 @@
+</div>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> This is for educational purposes only. Investments involve risk, including loss of principal. Returns are not guaranteed. Use real financial tools and advice for actual investing.
+        </div>
+    </div>
+
+    <script>
+        let chart;
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === 'demo' && password === 'pass') {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                alert('Demo credentials: username=demo, password=pass');
+            }
+        }
+
+        function updateReturnDisplay() {
+            const returnVal = document.getElementById('annualReturn').value;
+            document.getElementById('returnDisplay').textContent = returnVal + '%';
+        }
+
+        function calculateProjection() {
+            const initial = parseFloat(document.getElementById('initialInvestment').value);
+            const rate = parseFloat(document.getElementById('annualReturn').value) / 100;
+            const years = parseInt(document.getElementById('years').value);
+            
+            if (isNaN(initial)  isNaN(rate)  isNaN(years)) {
+                alert('Please enter valid numbers.');
+                return;
+            }
+            
+            // Compound interest formula: A = P(1 + r)^t
+            const finalAmount = initial * Math.pow(1 + rate, years);
+            document.getElementById('projection').innerHTML = <strong>Projected Value: $${finalAmount.toFixed(2)}</strong> (Total Growth: $${(finalAmount - initial).toFixed(2)});
+            
+            // Generate data for chart
+            const labels = [];
+            const data = [];
+            for (let y = 0; y <= years; y++) {
+                labels.push(y + ' years');
+                data.push(initial * Math.pow(1 + rate, y));
+            }
+            
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            if (chart) {
+                chart.destroy();
+            }
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Investment Growth',
+                        data: data,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Auto-login for demo
+        window.onload = function() {
+            login();
+        };
+    </script>
+</body>
+</html>
